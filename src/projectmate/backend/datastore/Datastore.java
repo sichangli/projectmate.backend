@@ -20,8 +20,8 @@ public class Datastore {
 		datastore = DatastoreServiceFactory.getDatastoreService();
 	}
 	
-	public User logIn(String name, String password) {
-		Entity user = findUserEntity(name);
+	public User logIn(String userId, String password) {
+		Entity user = findUserEntity(userId);
 		if (user != null) {
 			String tempPassword = (String) user.getProperty("password");
 			if (tempPassword.equals(password))
@@ -35,37 +35,37 @@ public class Datastore {
 	
 	private User getUserFromEntity(Entity userEntity) {
 		User user = new User();
-		user.setName((String) userEntity.getProperty("name"));
+		user.setUserId((String) userEntity.getProperty("userId"));
 		user.setPassword((String) userEntity.getProperty("password"));
 		return user;
 	}
 	
-	public boolean signUp(User user) {
-		Entity userEntity = findUserEntity(user.getName());
+	public boolean signup(String userId, String password) {
+		Entity userEntity = findUserEntity(userId);
 		if (userEntity != null)
 			return false;
 		else {
-			addUser(user);
+			addUser(userId, password);
 			return true;
 		}
 	}
 	
-	private void addUser(User user) {
+	private void addUser(String userId, String password) {
 		Key key = KeyFactory.createKey("user", "default");
 		Entity userE = new Entity("user", key);
-		userE.setProperty("name", user.getName());
-		userE.setProperty("password", user.getPassword());
+		userE.setProperty("userId", userId);
+		userE.setProperty("password", password);
 		datastore.put(userE);
 	}
 	
-	private Entity findUserEntity(String name) {
+	private Entity findUserEntity(String userId) {
 		Entity user = null;
 		Key key = KeyFactory.createKey("user", "default");
 		Query query = new Query("user", key);
 		List<Entity> users = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
 		for (Entity u : users) {
-			String tempName = (String) u.getProperty("name");
-			if (name.equals(tempName))
+			String tempUserId = (String) u.getProperty("userId");
+			if (userId.equals(tempUserId))
 				user = u;
 		}
 		return user;
