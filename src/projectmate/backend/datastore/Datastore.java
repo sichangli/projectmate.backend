@@ -2,6 +2,7 @@ package projectmate.backend.datastore;
 
 import java.util.List;
 
+import projectmate.backend.models.Project;
 import projectmate.backend.models.User;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -70,4 +71,19 @@ public class Datastore {
 		}
 		return user;
 	}
+	
+	public void addPorject(Project proj) {
+		List users = proj.getUsers();
+		/*First setup multiple pairs of project and users*/
+		long pid = proj.getProid();
+		for(Object uid : users)
+		{
+			Entity userpropair = null;
+			uid = (Long)uid;
+			userpropair.setProperty("userid", uid);
+			userpropair.setProperty("projid", pid);
+			datastore.put(userpropair);
+		}
+	}
+	
 }
