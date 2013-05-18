@@ -1,8 +1,10 @@
 package projectmate.backend.datastore;
 
+import java.util.Date;
 import java.util.List;
 
 import projectmate.backend.models.Project;
+import projectmate.backend.models.Task;
 import projectmate.backend.models.User;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -72,18 +74,86 @@ public class Datastore {
 		return user;
 	}
 	
-	public void addPorject(Project proj) {
+	public void addProjectCaller(Project proj){
+		addProject(proj);
+	}
+	
+	private void addProject(Project proj) {
+		Key keyforPair = KeyFactory.createKey("pair", "default");
+		Key keyforProj = KeyFactory.createKey("proj", "default");
+		
 		List users = proj.getUsers();
 		/*First setup multiple pairs of project and users*/
 		long pid = proj.getProid();
+		
+		/*Should be no need to build task at this moment*/
+		//List tasks = proj.getTasks();
+		String owner = proj.getOwner();
+		Date deadline = proj.getDeadline();
+		String title = proj.getTitle();
+		String desc = proj.getDescr();
+		int status = proj.getStatus();
+		Entity userpropair = null;
+		/*make <proj, user> pair as entity for search projects for a user*/
 		for(Object uid : users)
 		{
-			Entity userpropair = null;
-			uid = (Long)uid;
+			userpropair = new Entity("pair", keyforPair);
+			uid = (String)uid;
 			userpropair.setProperty("userid", uid);
 			userpropair.setProperty("projid", pid);
 			datastore.put(userpropair);
 		}
+		
+		/*make proj entity*/
+		Entity project = new Entity("proj", keyforProj);
+		project.setProperty("title", title);
+		project.setProperty("owner", owner);
+		project.setProperty("desc", desc);
+		project.setProperty("status", status);
+		project.setProperty("deadline", deadline);
+		project.setProperty("pid", pid);
+		datastore.put(project);
+		
 	}
+	
+	public void createTask(Task task){
+		String taskid = Long.toString(task.getTaskId());
+		String projid = Long.toString(task.getParentProj());
+		
+		Key keyforPair = KeyFactory.createKey("taskpair", "default");
+		Key keyforTask = KeyFactory.createKey("task", projid);
+		
+		long tid = task.getTaskId();
+		long parentProj = task.getParentProj();
+		String owner = task.getOwner();
+		String desc = task.getDesc();
+		String title = task.getTitle();
+		Date deadline = task.getDeadline();
+		List users = task.getUsers();
+		int status = task.getStatus();
+		
+		/*Create a <proj, task> pair first*/
+		for(Object user : users){
+			Entity userpair = new Entity("taskpair", keyforPair);
+			user = (String) user;
+			userpair.setProperty("userid", user);
+			userpair.setProperty("taskid", tid);
+			datastore.put(userpair);
+		}
+		
+		
+		Entity taskentity = new Entity("task", keyforTask);
+		taskentity.setProperty("tid", tid);
+		taskentity.setProperty("owner", owner);
+		taskentity.setProperty("desc", desc);
+		taskentity.setProperty("deadline", deadline);
+		taskentity.setProperty("status", status);
+		taskentity.setProperty("parentProj", parentProj);
+		taskentity.setProperty("title", title);
+		
+		datastore.put(taskentity);
+	}
+	
+	
 	
 }
