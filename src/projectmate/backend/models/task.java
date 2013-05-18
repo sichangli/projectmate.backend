@@ -2,7 +2,7 @@ package projectmate.backend.models;
 
 import java.util.ArrayList;
 
-public class task {
+public class Task {
 	private String title;
 	private int status;
 	private ArrayList<Long> users;

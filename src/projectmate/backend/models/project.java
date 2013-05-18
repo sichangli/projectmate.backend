@@ -3,7 +3,7 @@ package projectmate.backend.models;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class project {
+public class Project {
 	private String title;
 	private String descr;
 	private long proid;
