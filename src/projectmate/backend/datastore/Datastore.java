@@ -44,24 +44,30 @@ public class Datastore {
 		User user = new User();
 		user.setUserId((String) userEntity.getProperty("userId"));
 		user.setPassword((String) userEntity.getProperty("password"));
+		user.setLastName((String) userEntity.getProperty("lastName"));
+		user.setFirstName((String) userEntity.getProperty("firstName"));
+		user.setSex((String) userEntity.getProperty("sex"));
 		return user;
 	}
 	
-	public boolean signup(String userId, String password) {
-		Entity userEntity = findUserEntity(userId);
+	public boolean signup(User user) {
+		Entity userEntity = findUserEntity(user.getUserId());
 		if (userEntity != null)
 			return false;
 		else {
-			addUser(userId, password);
+			addUser(user);
 			return true;
 		}
 	}
 	
-	private void addUser(String userId, String password) {
+	private void addUser(User user) {
 		Key key = KeyFactory.createKey("user", "default");
 		Entity userE = new Entity("user", key);
-		userE.setProperty("userId", userId);
-		userE.setProperty("password", password);
+		userE.setProperty("userId", user.getUserId());
+		userE.setProperty("password", user.getPassword());
+		userE.setProperty("lastName", user.getLastName());
+		userE.setProperty("firstName", user.getFirstName());
+		userE.setProperty("sex", user.getSex());
 		datastore.put(userE);
 	}
 	
