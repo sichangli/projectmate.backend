@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import projectmate.backend.datastore.Datastore;
+import projectmate.backend.models.User;
 
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
@@ -26,9 +27,19 @@ public class SignupServlet extends HttpServlet {
 
 		String userId = req.getParameter("userId");
 		String userPwd = req.getParameter("userPwd");
+		String lastName = req.getParameter("lastName");
+		String firstName = req.getParameter("firstName");
+		String sex = req.getParameter("sex");
+		
+		User user = new User();
+		user.setUserId(userId);
+		user.setPassword(userPwd);
+		user.setLastName(lastName);
+		user.setFirstName(firstName);
+		user.setSex(sex);
 		
 		Datastore ds = new Datastore();
-		if (ds.signup(userId, userPwd)) {
+		if (ds.signup(user)) {
 			try {
 				result.put("result", "yes");
 			} catch (JSONException e) {

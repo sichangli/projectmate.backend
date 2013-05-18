@@ -31,6 +31,9 @@ public class LoginServlet extends HttpServlet {
 		if (user != null) {
 			try {
 				result.put("result", "yes");
+				result.put("lastName", user.getLastName());
+				result.put("firstName", user.getFirstName());
+				result.put("sex", user.getSex());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
