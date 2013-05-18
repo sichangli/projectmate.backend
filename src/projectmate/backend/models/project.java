@@ -10,8 +10,15 @@ public class Project {
 	private ArrayList<Long> tasks;
 	private ArrayList<Long> users;
 	private Date deadline;
-	private long owner;
+	private String owner;
 	private int status;
+	
+	public String getOwner() {
+		return owner;
+	}
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
 	
 	public int getStatus() {
 		return status;
@@ -48,5 +55,11 @@ public class Project {
 	}
 	public void setTitle(String title) {
 		this.title = title;
+	}
+	public Date getDeadline() {
+		return deadline;
+	}
+	public void setDeadline(Date deadline) {
+		this.deadline = deadline;
 	} 
 }
