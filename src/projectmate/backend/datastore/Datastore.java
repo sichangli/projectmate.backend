@@ -92,7 +92,7 @@ public class Datastore {
 	private Long addPid() {
 		Key key = KeyFactory.createKey("proj", "default");
 		Query q = new Query("proj", key);
-		List<Entity> list =  datastore.prepare(q).asList(null);
+		List<Entity> list =  datastore.prepare(q).asList(FetchOptions.Builder.withLimit(1000));
 		if(list == null)
 			return new Long(1);
 		int res = list.size();
