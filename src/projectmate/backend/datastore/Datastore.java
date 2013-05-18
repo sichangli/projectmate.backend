@@ -93,6 +93,8 @@ public class Datastore {
 		Key key = KeyFactory.createKey("proj", "default");
 		Query q = new Query("proj", key);
 		List<Entity> list =  datastore.prepare(q).asList(null);
+		if(list == null)
+			return new Long(1);
 		int res = list.size();
 		res++;
 		return new Long(res);
