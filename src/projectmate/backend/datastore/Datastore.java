@@ -78,8 +78,9 @@ public class Datastore {
 		return user;
 	}
 	
-	public void addProjectCaller(Project proj){
-		addProject(proj);
+	public long addProjectCaller(Project proj){
+		long pid = addProject(proj);
+		return pid;
 	}
 	
 	private Long addPid() {
@@ -91,7 +92,7 @@ public class Datastore {
 		return new Long(res);
 	}
 	
-	private void addProject(Project proj) {
+	private long addProject(Project proj) {
 		Key keyforPair = KeyFactory.createKey("pair", "default");
 		Key keyforProj = KeyFactory.createKey("proj", "default");
 		
@@ -128,6 +129,7 @@ public class Datastore {
 			datastore.put(userpropair);
 		}
 		
+		return pid;
 	}
 	
 	public void createTask(Task task){

@@ -8,7 +8,7 @@ public class Project {
 	private String descr;
 	private long proid;
 	private ArrayList<Long> tasks;
-	private ArrayList<Long> users;
+	private ArrayList<String> users;
 	private Date deadline;
 	private String owner;
 	private int status;
@@ -26,10 +26,10 @@ public class Project {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public ArrayList<Long> getUsers() {
+	public ArrayList<String> getUsers() {
 		return users;
 	}
-	public void setUsers(ArrayList<Long> users) {
+	public void setUsers(ArrayList<String> users) {
 		this.users = users;
 	}
 	public ArrayList<Long> getTasks() {
