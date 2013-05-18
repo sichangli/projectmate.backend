@@ -22,5 +22,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>signup</servlet-name>
         <url-pattern>/signup</url-pattern>
     </servlet-mapping> 
+    
+    <servlet>
+        <servlet-name>createproject</servlet-name>
+        <servlet-class>projectmate.backend.servlets.CreateProject</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>createproject</servlet-name>
+        <url-pattern>/createproject</url-pattern>
+    </servlet-mapping>
 
 </web-app>

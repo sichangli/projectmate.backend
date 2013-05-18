@@ -20,6 +20,9 @@ import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 public class CreateProject extends HttpServlet {
+
+	private static final long serialVersionUID = -2309515937540315917L;
+
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
 			throws ServletException, IOException
 	{
