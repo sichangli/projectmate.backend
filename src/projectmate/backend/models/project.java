@@ -11,7 +11,7 @@ public class Project {
 	private ArrayList<String> users;
 	private Date deadline;
 	private String owner;
-	private int status;
+	private long status;
 	
 	public String getOwner() {
 		return owner;
@@ -20,10 +20,10 @@ public class Project {
 		this.owner = owner;
 	}
 	
-	public int getStatus() {
+	public long getStatus() {
 		return status;
 	}
-	public void setStatus(int status) {
+	public void setStatus(long status) {
 		this.status = status;
 	}
 	public ArrayList<String> getUsers() {
