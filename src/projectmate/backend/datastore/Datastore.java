@@ -112,8 +112,7 @@ public class Datastore {
 		Date deadline = proj.getDeadline();
 		String title = proj.getTitle();
 		String desc = proj.getDescr();
-		int status = proj.getStatus();
-		
+		long status = proj.getStatus();
 		
 		/*make proj entity*/
 		Entity project = new Entity("proj", keyforProj);
@@ -154,7 +153,7 @@ public class Datastore {
 		String title = task.getTitle();
 		Date deadline = task.getDeadline();
 		List users = task.getUsers();
-		int status = task.getStatus();
+		long status = task.getStatus();
 		
 		/*Create a <user, task> pair first*/
 		for(Object user : users){
@@ -219,7 +218,7 @@ public class Datastore {
 			tmpproj.setDescr((String) tmp.getProperty("desc"));
 			tmpproj.setOwner((String) tmp.getProperty("owner"));
 			tmpproj.setProid((Long) tmp.getProperty("pid"));
-			tmpproj.setStatus((Integer) tmp.getProperty("status"));
+			tmpproj.setStatus((Long) tmp.getProperty("status"));
 			tmpproj.setTitle((String) tmp.getProperty("title"));
 			
 			projects.add(tmpproj);

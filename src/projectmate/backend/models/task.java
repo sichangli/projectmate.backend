@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Task {
 	private String title;
-	private int status;
+	private long status;
 	private ArrayList<String> users;
 	private long parentProj;
 	private String owner;
@@ -49,10 +49,10 @@ public class Task {
 		this.users = users;
 	}
 	
-	public int getStatus() {
+	public long getStatus() {
 		return status;
 	}
-	public void setStatus(int status) {
+	public void setStatus(long status) {
 		this.status = status;
 	}
 	public long getTaskId() {
