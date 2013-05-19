@@ -362,4 +362,9 @@ public class Datastore {
 		}
 	}
 	
+	//get 4 most recent projects for a user
+	public ArrayList<Project> getRecentProjects(String userId) {
+		
+	}
+	
 }
