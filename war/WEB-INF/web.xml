@@ -31,5 +31,14 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>createproject</servlet-name>
         <url-pattern>/createproject</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>createtask</servlet-name>
+        <servlet-class>projectmate.backend.servlets.CreateTask</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>createtask</servlet-name>
+        <url-pattern>/createtask</url-pattern>
+    </servlet-mapping>
 
 </web-app>

@@ -139,15 +139,22 @@ public class Datastore {
 		return pid;
 	}
 	
+	public String createTaskId(long projectId, Key keyforTask) {
+		Filter taskFilter = new FilterPredicate("parentProj", FilterOperator.EQUAL, projectId);
+		Query query = new Query("task", keyforTask).setFilter(taskFilter);
+		List<Entity> list =  datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1000));
+		int tid = list.size() + 1;
+		return projectId + "-" + tid;
+	}
+	
 	public void createTask(Task task){
-		String taskid = Long.toString(task.getTaskId());
 		String projid = Long.toString(task.getParentProj());
 		
 		Key keyforPair = KeyFactory.createKey("taskpair", "default");
 		Key keyforTask = KeyFactory.createKey("task", projid);
 		
-		long tid = task.getTaskId();
 		long parentProj = task.getParentProj();
+		String tid = createTaskId(parentProj, keyforTask);
 		String owner = task.getOwner();
 		String desc = task.getDesc();
 		String title = task.getTitle();
