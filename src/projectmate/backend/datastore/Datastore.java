@@ -156,7 +156,7 @@ public class Datastore {
 		List users = task.getUsers();
 		int status = task.getStatus();
 		
-		/*Create a <proj, task> pair first*/
+		/*Create a <user, task> pair first*/
 		for(Object user : users){
 			Entity userpair = new Entity("taskpair", keyforPair);
 			user = (String) user;
