@@ -15,6 +15,8 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilter;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
@@ -133,6 +135,10 @@ public class Datastore {
 			uid = (String)uid;
 			userpropair.setProperty("userid", uid);
 			userpropair.setProperty("projid", pid);
+			userpropair.setProperty("fav", 0);
+			Date currdate = new Date();
+			long visitTime = currdate.getTime();
+			userpropair.setProperty("visitTime", visitTime);
 			datastore.put(userpropair);
 		}
 		
@@ -168,6 +174,7 @@ public class Datastore {
 			user = (String) user;
 			userpair.setProperty("userid", user);
 			userpair.setProperty("taskid", tid);
+			
 			datastore.put(userpair);
 		}
 		
@@ -331,7 +338,28 @@ public class Datastore {
 	
 	//get all favorite projects for a user
 	public ArrayList<Project> getFavoriteProjects(String userId) {
-		
+		Key keyforPair = KeyFactory.createKey("pair", "default");
+		Filter taskFilter = new FilterPredicate("userid", FilterOperator.EQUAL, userId);
+		Filter favFilter = new FilterPredicate("fav", FilterOperator.EQUAL, 1);
+		CompositeFilter comFilter = CompositeFilterOperator.and(taskFilter, favFilter);
+		Query query = new Query("task", keyforPair).setFilter(taskFilter);
+		List<Entity> list =  datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1000));
+		ArrayList<Project> result = new ArrayList<Project> ();
+		if(list == null){
+			return result;
+		} else {
+			for(Entity proj : list){
+				Project tmp = new Project();
+				/*Need to fecth tasks here*/
+				ArrayList<Long> tasks = new ArrayList<Long> ();
+				
+				
+				tmp.setDeadline((Date)proj.getProperty("deadline"));
+				tmp.setTitle((String)proj.getProperty("title"));
+				tmp.setProid((Long)proj.getProperty("pid"));
+				
+			}
+		}
 	}
 	
 }
