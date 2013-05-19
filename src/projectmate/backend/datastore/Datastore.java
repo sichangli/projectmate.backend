@@ -151,7 +151,7 @@ public class Datastore {
 		String projid = Long.toString(task.getParentProj());
 		
 		Key keyforPair = KeyFactory.createKey("taskpair", "default");
-		Key keyforTask = KeyFactory.createKey("task", projid);
+		Key keyforTask = KeyFactory.createKey("task", "default");
 		
 		long parentProj = task.getParentProj();
 		String tid = createTaskId(parentProj, keyforTask);
@@ -184,9 +184,51 @@ public class Datastore {
 		datastore.put(taskentity);
 	}
 	
+	//get all tasks for one person
+	public ArrayList<Task> findTasks(String userId) {
+		ArrayList<String> tids = findAllTaskPairs(userId);
+		ArrayList<Task> tasks = getTasks(tids);
+		return tasks;
+	}
+	
+	private ArrayList<String> findAllTaskPairs(String userId) {
+		Key keyforPair = KeyFactory.createKey("taskpair", "default");
+		Filter userFilter = new FilterPredicate("userid", FilterOperator.EQUAL, userId);
+		Query query = new Query("taskpair", keyforPair).setFilter(userFilter);
+		List<Entity> pairs = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
+		ArrayList<String> result = new ArrayList<String> ();
+		for (Entity pair : pairs) {
+			String tmp = (String) pair.getProperty("taskid");
+			result.add(tmp);
+		}
+		return result;
+	}
+	
+	private ArrayList<Task> getTasks(ArrayList<String> tids) {
+		Key keyforTask = KeyFactory.createKey("task", "default");
+		ArrayList<Task> tasks = new ArrayList<Task> ();
+		
+		for (String tid : tids) {
+			Filter taskFilter = new FilterPredicate("tid", FilterOperator.EQUAL, tid);
+			Query query = new Query("task", keyforTask).setFilter(taskFilter);
+			List<Entity> list = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
+			Entity tmp = (Entity) list.get(0);
+			Task task = new Task();
+			task.setTaskId((String) tmp.getProperty("tid"));
+			task.setOwner((String) tmp.getProperty("owner"));
+			task.setDesc((String) tmp.getProperty("desc"));
+			task.setDeadline((Date) tmp.getProperty("deadline"));
+			task.setStatus((Long) tmp.getProperty("status"));
+			task.setParentProj((Long) tmp.getProperty("parentProj"));
+			task.setTitle((String) tmp.getProperty("title"));
+			tasks.add(task);
+		}
+		return tasks;
+	}
+	
 	/*Edit project*/
 	private void editProject(int flag, Project proj){
-		
+		Key key = KeyFactory.createKey("pair", "default");
 		
 	}
 	
@@ -232,6 +274,64 @@ public class Datastore {
 		}
 		
 		return projects;
+	}
+	
+	//get all upcoming projects for a user
+	public ArrayList<Project> getUpcomingProjects(String userId) {
+		ArrayList<Project> all = findAllProjects(userId);
+		ArrayList<Project> upcoming = new ArrayList<Project>();
+		for (Project proj : all) {
+			long status = proj.getStatus();
+			Date deadline = proj.getDeadline();
+			Date today = new Date();
+			if (status == 0 && isUpcoming(today, deadline)) {
+				upcoming.add(proj);
+			}
+		}
+		return upcoming;
+	}
+	
+	//check whether (deadline - 7  < today < deadline)
+	private boolean isUpcoming(Date today, Date deadline) {
+		long todayTime = today.getTime();
+		long deadlineTime = deadline.getTime();
+		long diffDays = (deadlineTime - todayTime) / (24 * 60 * 60 * 1000);
+		if (today.before(deadline) && diffDays < 7) {
+			return true;
+		}
+		else
+			return false;
+	}
+	
+	//get all on-going projects for a user
+	public ArrayList<Project> getOngoingProjects(String userId) {
+		ArrayList<Project> all = findAllProjects(userId);
+		ArrayList<Project> ongoing = new ArrayList<Project>();
+		for (Project proj : all) {
+			long status = proj.getStatus();
+			Date deadline = proj.getDeadline();
+			Date today = new Date();
+			if (proj.getStatus() == 0 && today.before(deadline))
+				ongoing.add(proj);
+		}
+		return ongoing;
+	}
+	
+	//get all completed projects for a user
+	public ArrayList<Project> getCompletedProjects(String userId) {
+		ArrayList<Project> all = findAllProjects(userId);
+		ArrayList<Project> completed = new ArrayList<Project>();
+		for (Project proj : all) {
+			long status = proj.getStatus();
+			if (status == 1)
+				completed.add(proj);
+		}
+		return completed;
+	}
+	
+	//get all favorite projects for a user
+	public ArrayList<Project> getFavoriteProjects(String userId) {
+		
 	}
 	
 }

@@ -10,7 +10,7 @@ public class Task {
 	private long parentProj;
 	private String owner;
 	private String desc;
-	private long taskId;
+	private String taskId;
 	private Date deadline;
 	
 	public String getTitle() {
@@ -55,10 +55,10 @@ public class Task {
 	public void setStatus(long status) {
 		this.status = status;
 	}
-	public long getTaskId() {
+	public String getTaskId() {
 		return taskId;
 	}
-	public void setTaskId(long taskId) {
+	public void setTaskId(String taskId) {
 		this.taskId = taskId;
 	}
 	public Date getDeadline() {
