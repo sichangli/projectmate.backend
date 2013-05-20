@@ -53,6 +53,9 @@ public class GetProjectInfo extends HttpServlet {
 				r.put("deadline", p.getDeadline());
 				r.put("descr", p.getDescr());
 				r.put("owner", p.getOwner());
+				JSONArray members = new JSONArray();
+				
+				r.put("members", members);
 				arr.put(r);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
