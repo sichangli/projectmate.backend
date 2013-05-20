@@ -41,6 +41,7 @@ public class GetProjectInfo extends HttpServlet {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		//get 4 recent projects
 		ArrayList<Project> recents = ds.getRecentProjects(userId);
 		JSONArray arr = new JSONArray();
 		for (Project p : recents) {

@@ -40,5 +40,50 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <servlet-name>createtask</servlet-name>
         <url-pattern>/createtask</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>getprojectinfo</servlet-name>
+        <servlet-class>projectmate.backend.servlets.GetProjectInfo</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>getprojectinfo</servlet-name>
+        <url-pattern>/getprojectinfo</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>getupcomings</servlet-name>
+        <servlet-class>projectmate.backend.servlets.GetUpcomingProjects</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>getupcomings</servlet-name>
+        <url-pattern>/getupcomings</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>getongoings</servlet-name>
+        <servlet-class>projectmate.backend.servlets.GetOngoingProjects</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>getongoings</servlet-name>
+        <url-pattern>/getongoings</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>getcompleteds</servlet-name>
+        <servlet-class>projectmate.backend.servlets.GetCompletedProjects</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>getcompleteds</servlet-name>
+        <url-pattern>/getcompleteds</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>getfavorites</servlet-name>
+        <servlet-class>projectmate.backend.servlets.GetFavoriteProjects</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>getfavorites</servlet-name>
+        <url-pattern>/getfavorites</url-pattern>
+    </servlet-mapping>
 
 </web-app>
