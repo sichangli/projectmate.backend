@@ -364,7 +364,22 @@ public class Datastore {
 	
 	//get 4 most recent projects for a user
 	public ArrayList<Project> getRecentProjects(String userId) {
-		
+		ArrayList<Long> ids = getRecentProjectIds(userId);
+		return getProjects(ids);
 	}
 	
+	//get 4 most recent project id for a user
+	private ArrayList<Long> getRecentProjectIds(String userId) {
+		Key key = KeyFactory.createKey("pair", "default");
+		
+		Filter userFilter = new FilterPredicate("userid", FilterOperator.EQUAL, userId);
+		Query query = new Query("pair", key).setFilter(userFilter).addSort("visittime", Query.SortDirection.DESCENDING);;
+		List<Entity> pairs = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(4));
+		ArrayList<Long> result = new ArrayList<Long> ();
+		for(Entity pair : pairs){
+			Long tmp = (Long) pair.getProperty("pid");
+			result.add(tmp);
+		}
+		return result;
+	}
 }
