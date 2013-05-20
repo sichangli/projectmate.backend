@@ -7,11 +7,13 @@ public class Project {
 	private String title;
 	private String descr;
 	private long proid;
-	private ArrayList<Long> tasks;
+	private ArrayList<String> tasks;
 	private ArrayList<String> users;
 	private Date deadline;
 	private String owner;
 	private long status;
+	private ArrayList<Task> Tasklist;
+	private ArrayList<User> Userlist;
 	
 	public String getOwner() {
 		return owner;
@@ -32,10 +34,10 @@ public class Project {
 	public void setUsers(ArrayList<String> users) {
 		this.users = users;
 	}
-	public ArrayList<Long> getTasks() {
+	public ArrayList<String> getTasks() {
 		return tasks;
 	}
-	public void setTasks(ArrayList<Long> tasks) {
+	public void setTasks(ArrayList<String> tasks) {
 		this.tasks = tasks;
 	}
 	public long getProid() {
@@ -61,5 +63,17 @@ public class Project {
 	}
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
+	}
+	public ArrayList<Task> getTasklist() {
+		return Tasklist;
+	}
+	public void setTasklist(ArrayList<Task> tasklist) {
+		this.Tasklist = tasklist;
+	}
+	public ArrayList<User> getUserlist() {
+		return Userlist;
+	}
+	public void setUserlist(ArrayList<User> userlist) {
+		Userlist = userlist;
 	} 
 }
