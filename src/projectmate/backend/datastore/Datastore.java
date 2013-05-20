@@ -22,13 +22,13 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 public class Datastore {
-	
+
 	private DatastoreService datastore;
 
 	public Datastore() {
 		datastore = DatastoreServiceFactory.getDatastoreService();
 	}
-	
+
 	public User logIn(String userId, String password) {
 		Entity user = findUserEntity(userId);
 		if (user != null) {
@@ -41,7 +41,7 @@ public class Datastore {
 		else
 			return null;
 	}
-	
+
 	private User getUserFromEntity(Entity userEntity) {
 		User user = new User();
 		user.setUserId((String) userEntity.getProperty("userId"));
@@ -51,7 +51,7 @@ public class Datastore {
 		user.setSex((String) userEntity.getProperty("sex"));
 		return user;
 	}
-	
+
 	public boolean signup(User user) {
 		Entity userEntity = findUserEntity(user.getUserId());
 		if (userEntity != null)
@@ -61,7 +61,7 @@ public class Datastore {
 			return true;
 		}
 	}
-	
+
 	private void addUser(User user) {
 		Key key = KeyFactory.createKey("user", "default");
 		Entity userE = new Entity("user", key);
@@ -72,7 +72,7 @@ public class Datastore {
 		userE.setProperty("sex", user.getSex());
 		datastore.put(userE);
 	}
-	
+
 	private Entity findUserEntity(String userId) {
 		Entity user = null;
 		Key key = KeyFactory.createKey("user", "default");
@@ -85,12 +85,12 @@ public class Datastore {
 		}
 		return user;
 	}
-	
+
 	public long addProjectCaller(Project proj){
 		long pid = addProject(proj);
 		return pid;
 	}
-	
+
 	private Long addPid() {
 		Key key = KeyFactory.createKey("proj", "default");
 		Query q = new Query("proj", key);
@@ -101,13 +101,13 @@ public class Datastore {
 		res++;
 		return new Long(res);
 	}
-	
+
 	private long addProject(Project proj) {
 		Key keyforPair = KeyFactory.createKey("pair", "default");
 		Key keyforProj = KeyFactory.createKey("proj", "default");
-		
+
 		List users = proj.getUsers();
-		
+
 		/*Should be no need to build task at this moment*/
 		//List tasks = proj.getTasks();
 		String owner = proj.getOwner();
@@ -115,7 +115,7 @@ public class Datastore {
 		String title = proj.getTitle();
 		String desc = proj.getDescr();
 		long status = proj.getStatus();
-		
+
 		/*make proj entity*/
 		Entity project = new Entity("proj", keyforProj);
 		project.setProperty("title", title);
@@ -126,7 +126,7 @@ public class Datastore {
 		long pid = addPid();
 		project.setProperty("pid", pid);
 		datastore.put(project);
-		
+
 		/*make <proj, user> pair as entity for search projects for a user*/
 		Entity userpropair = null;
 		for(Object uid : users)
@@ -137,14 +137,14 @@ public class Datastore {
 			userpropair.setProperty("projid", pid);
 			userpropair.setProperty("fav", 0);
 			Date currdate = new Date();
-			long visitTime = currdate.getTime();
-			userpropair.setProperty("visitTime", visitTime);
+			//long visitTime = currdate.getTime();
+			userpropair.setProperty("visittime", currdate);
 			datastore.put(userpropair);
 		}
-		
+
 		return pid;
 	}
-	
+
 	public String createTaskId(long projectId, Key keyforTask) {
 		Filter taskFilter = new FilterPredicate("parentProj", FilterOperator.EQUAL, projectId);
 		Query query = new Query("task", keyforTask).setFilter(taskFilter);
@@ -152,13 +152,13 @@ public class Datastore {
 		int tid = list.size() + 1;
 		return projectId + "-" + tid;
 	}
-	
+
 	public void createTask(Task task){
 		String projid = Long.toString(task.getParentProj());
-		
+
 		Key keyforPair = KeyFactory.createKey("taskpair", "default");
 		Key keyforTask = KeyFactory.createKey("task", "default");
-		
+
 		long parentProj = task.getParentProj();
 		String tid = createTaskId(parentProj, keyforTask);
 		String owner = task.getOwner();
@@ -167,18 +167,18 @@ public class Datastore {
 		Date deadline = task.getDeadline();
 		List users = task.getUsers();
 		long status = task.getStatus();
-		
+
 		/*Create a <user, task> pair first*/
 		for(Object user : users){
 			Entity userpair = new Entity("taskpair", keyforPair);
 			user = (String) user;
 			userpair.setProperty("userid", user);
 			userpair.setProperty("taskid", tid);
-			
+
 			datastore.put(userpair);
 		}
-		
-		
+
+
 		Entity taskentity = new Entity("task", keyforTask);
 		taskentity.setProperty("tid", tid);
 		taskentity.setProperty("owner", owner);
@@ -187,17 +187,17 @@ public class Datastore {
 		taskentity.setProperty("status", status);
 		taskentity.setProperty("parentProj", parentProj);
 		taskentity.setProperty("title", title);
-		
+
 		datastore.put(taskentity);
 	}
-	
+
 	//get all tasks for one person
 	public ArrayList<Task> findTasks(String userId) {
 		ArrayList<String> tids = findAllTaskPairs(userId);
 		ArrayList<Task> tasks = getTasks(tids);
 		return tasks;
 	}
-	
+
 	private ArrayList<String> findAllTaskPairs(String userId) {
 		Key keyforPair = KeyFactory.createKey("taskpair", "default");
 		Filter userFilter = new FilterPredicate("userid", FilterOperator.EQUAL, userId);
@@ -210,11 +210,11 @@ public class Datastore {
 		}
 		return result;
 	}
-	
+
 	private ArrayList<Task> getTasks(ArrayList<String> tids) {
 		Key keyforTask = KeyFactory.createKey("task", "default");
 		ArrayList<Task> tasks = new ArrayList<Task> ();
-		
+
 		for (String tid : tids) {
 			Filter taskFilter = new FilterPredicate("tid", FilterOperator.EQUAL, tid);
 			Query query = new Query("task", keyforTask).setFilter(taskFilter);
@@ -232,23 +232,23 @@ public class Datastore {
 		}
 		return tasks;
 	}
-	
+
 	/*Edit project*/
 	private void editProject(int flag, Project proj){
 		Key key = KeyFactory.createKey("pair", "default");
-		
+
 	}
-	
+
 	/*Get all projects for one person*/
 	public ArrayList<Project> findAllProjects(String userid){
 		ArrayList<Long> pids = findAllPairs(userid);
 		ArrayList<Project> projs = getProjects(pids);
 		return projs;
 	}
-	
+
 	private ArrayList<Long> findAllPairs(String userid){
 		Key key = KeyFactory.createKey("pair", "default");
-		
+
 		Filter userFilter = new FilterPredicate("userid", FilterOperator.EQUAL, userid);
 		Query query = new Query("pair", key).setFilter(userFilter);
 		List<Entity> pairs = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
@@ -257,10 +257,10 @@ public class Datastore {
 			Long tmp = (Long) pair.getProperty("pid");
 			result.add(tmp);
 		}
-		
+
 		return result;
 	}
-	
+
 	private ArrayList<Project> getProjects(ArrayList<Long> pids){
 		Key key = KeyFactory.createKey("proj", "default");
 		ArrayList<Project> projects = new ArrayList<Project> ();
@@ -276,13 +276,76 @@ public class Datastore {
 			tmpproj.setProid((Long) tmp.getProperty("pid"));
 			tmpproj.setStatus((Long) tmp.getProperty("status"));
 			tmpproj.setTitle((String) tmp.getProperty("title"));
-			
+
+			ArrayList<User> users = getAllUsersProj(pid);
+			if(users == null){
+				tmpproj.setUserlist(new ArrayList<User> ());
+			} else {
+				tmpproj.setUserlist(users);
+			}
+
 			projects.add(tmpproj);
 		}
-		
+
 		return projects;
 	}
-	
+
+	private ArrayList<Task> getAllTasks(long projid)
+	{
+		ArrayList<Task> tasks = new ArrayList<Task> ();
+		Key keyforTask = KeyFactory.createKey("task", "default");
+		Filter taskFilter = new FilterPredicate("parentProj", FilterOperator.EQUAL, projid);
+		Query query = new Query("task", keyforTask).setFilter(taskFilter);
+		List<Entity> list =  datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1000));
+		if(list == null){
+			return tasks;
+		}
+		for(Entity t : list)
+		{
+			Task task = new Task();
+			task.setParentProj(projid);
+			task.setOwner((String) t.getProperty("owner"));
+			task.setDesc((String) t.getProperty("desc"));
+			task.setStatus((Long) t.getProperty("status"));
+			task.setTaskId((String) t.getProperty("tid"));
+			task.setTitle((String) t.getProperty("title"));
+			task.setDeadline((Date) t.getProperty("deadline"));
+			tasks.add(task);
+		}
+		return tasks;
+
+	}
+
+	private ArrayList<User> getAllUsersProj(long projid) {
+		Key key = KeyFactory.createKey("pair", "default");
+		Key keyforUser = KeyFactory.createKey("user", "default");
+		Filter projFilter = new FilterPredicate("projid", FilterOperator.EQUAL, projid);
+		Query query = new Query("pair", key).setFilter(projFilter);
+		List<Entity> pairs = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
+		ArrayList<User> result = new ArrayList<User> ();
+		if(pairs == null){
+			return result;
+		}
+		for(Entity pair : pairs){
+			Long userid = (Long)pair.getProperty("userid");
+
+			Filter userFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userid);
+			Query q = new Query("user", keyforUser).setFilter(userFilter);
+			List<Entity> list = datastore.prepare(q).asList(FetchOptions.Builder.withLimit(100));
+			if(list == null || list.size() > 1){
+				continue;
+			}
+			Entity userentity = list.get(0);
+			User user = new User();
+			user.setFirstName((String)userentity.getProperty("firstName"));
+			user.setLastName((String) userentity.getProperty("lastName"));
+			user.setSex((String) userentity.getProperty("sex"));
+			user.setUserId((String) userentity.getProperty("userId"));
+			result.add(user);
+		}
+		return result;
+	}
+
 	//get all upcoming projects for a user
 	public ArrayList<Project> getUpcomingProjects(String userId) {
 		ArrayList<Project> all = findAllProjects(userId);
@@ -297,7 +360,7 @@ public class Datastore {
 		}
 		return upcoming;
 	}
-	
+
 	//check whether (deadline - 7  < today < deadline)
 	private boolean isUpcoming(Date today, Date deadline) {
 		long todayTime = today.getTime();
@@ -309,7 +372,7 @@ public class Datastore {
 		else
 			return false;
 	}
-	
+
 	//get all on-going projects for a user
 	public ArrayList<Project> getOngoingProjects(String userId) {
 		ArrayList<Project> all = findAllProjects(userId);
@@ -323,7 +386,7 @@ public class Datastore {
 		}
 		return ongoing;
 	}
-	
+
 	//get all completed projects for a user
 	public ArrayList<Project> getCompletedProjects(String userId) {
 		ArrayList<Project> all = findAllProjects(userId);
@@ -335,7 +398,7 @@ public class Datastore {
 		}
 		return completed;
 	}
-	
+
 	//get all favorite projects for a user
 	public ArrayList<Project> getFavoriteProjects(String userId) {
 		Key keyforPair = KeyFactory.createKey("pair", "default");
@@ -345,26 +408,34 @@ public class Datastore {
 		Query query = new Query("task", keyforPair).setFilter(taskFilter);
 		List<Entity> list =  datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1000));
 		ArrayList<Project> result = new ArrayList<Project> ();
-		if(list == null){
+		if(list == null)
 			return result;
-		} else {
-			for(Entity proj : list){
-				Project tmp = new Project();
-				/*Need to fecth tasks here*/
-				ArrayList<Long> tasks = new ArrayList<Long> ();
-				
-				
-				tmp.setDeadline((Date)proj.getProperty("deadline"));
-				tmp.setTitle((String)proj.getProperty("title"));
-				tmp.setProid((Long)proj.getProperty("pid"));
-				
+
+		for(Entity proj : list){
+			Project tmp = new Project();
+			/*No need to fecth tasks here, since a separate api will be provided to get tasks*/
+
+			tmp.setDeadline((Date)proj.getProperty("deadline"));
+			tmp.setTitle((String)proj.getProperty("title"));
+			tmp.setProid((Long)proj.getProperty("pid"));
+			tmp.setOwner((String)proj.getProperty("owner"));
+			tmp.setDescr((String)proj.getProperty("desc"));
+			tmp.setStatus((Long)proj.getProperty("status"));
+
+			ArrayList<User> users = getAllUsersProj((Long)proj.getProperty("pid"));
+			if(users == null){
+				tmp.setUserlist(new ArrayList<User> ());
+			} else {
+				tmp.setUserlist(users);
 			}
+			result.add(tmp);
 		}
+		return result;
 	}
-	
+
 	//get 4 most recent projects for a user
 	public ArrayList<Project> getRecentProjects(String userId) {
-		
+
 	}
-	
+
 }
