@@ -381,7 +381,7 @@ public class Datastore {
 			long status = proj.getStatus();
 			Date deadline = proj.getDeadline();
 			Date today = new Date();
-			if (proj.getStatus() == 0 && today.before(deadline))
+			if (status == 0 && today.before(deadline))
 				ongoing.add(proj);
 		}
 		return ongoing;
