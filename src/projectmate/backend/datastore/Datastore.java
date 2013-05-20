@@ -165,7 +165,7 @@ public class Datastore {
 		String desc = task.getDesc();
 		String title = task.getTitle();
 		Date deadline = task.getDeadline();
-		List users = task.getUsers();
+		List<String> users = task.getUsers();
 		long status = task.getStatus();
 
 		/*Create a <user, task> pair first*/
@@ -258,7 +258,7 @@ public class Datastore {
 		if(pairs == null)
 			return result;
 		for(Entity pair : pairs){
-			Long tmp = (Long) pair.getProperty("pid");
+			Long tmp = (Long) pair.getProperty("projid");
 			result.add(tmp);
 		}
 
@@ -269,9 +269,11 @@ public class Datastore {
 		Key key = KeyFactory.createKey("proj", "default");
 		ArrayList<Project> projects = new ArrayList<Project> ();
 		for(Long pid : pids){
-			Filter projFilter = new FilterPredicate("pid", FilterOperator.EQUAL, Long.valueOf(pid));
+			Filter projFilter = new FilterPredicate("pid", FilterOperator.EQUAL, pid);
 			Query query = new Query("proj", key).setFilter(projFilter);
 			List<Entity> list = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
+			if(list == null)
+				continue; 
 			Entity tmp = (Entity) list.get(0);
 			Project tmpproj = new Project();
 			tmpproj.setDeadline((Date) tmp.getProperty("deadline"));
@@ -331,7 +333,7 @@ public class Datastore {
 			return result;
 		}
 		for(Entity pair : pairs){
-			Long userid = (Long)pair.getProperty("userid");
+			String userid = (String) pair.getProperty("userid");
 
 			Filter userFilter = new FilterPredicate("userId", FilterOperator.EQUAL, userid);
 			Query q = new Query("user", keyforUser).setFilter(userFilter);
@@ -452,6 +454,7 @@ public class Datastore {
 		Query query = new Query("pair", key).setFilter(userFilter).addSort("visittime", Query.SortDirection.DESCENDING);
 		List<Entity> pairs = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(4));
 		ArrayList<Long> result = new ArrayList<Long> ();
+		
 		for(Entity pair : pairs){
 			Long tmp = (Long) pair.getProperty("pid");
 			result.add(tmp);
