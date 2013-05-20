@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.mortbay.log.Log;
+
 import projectmate.backend.models.Project;
 import projectmate.backend.models.Task;
 import projectmate.backend.models.User;
@@ -258,7 +260,7 @@ public class Datastore {
 		if(pairs == null)
 			return result;
 		for(Entity pair : pairs){
-			Long tmp = (Long) pair.getProperty("pid");
+			Long tmp = (Long) pair.getProperty("projid");
 			result.add(tmp);
 		}
 
@@ -280,7 +282,7 @@ public class Datastore {
 			tmpproj.setProid((Long) tmp.getProperty("pid"));
 			tmpproj.setStatus((Long) tmp.getProperty("status"));
 			tmpproj.setTitle((String) tmp.getProperty("title"));
-
+			//Log.debug("Now the pid is:" + pid);
 			ArrayList<User> users = getAllUsersProj(pid);
 			if(users == null){
 				tmpproj.setUserlist(new ArrayList<User> ());
