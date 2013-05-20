@@ -15,6 +15,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 import projectmate.backend.datastore.Datastore;
 import projectmate.backend.models.Project;
+import projectmate.backend.models.User;
 
 public class GetProjectInfo extends HttpServlet {
 
@@ -53,9 +54,19 @@ public class GetProjectInfo extends HttpServlet {
 				r.put("deadline", p.getDeadline());
 				r.put("descr", p.getDescr());
 				r.put("owner", p.getOwner());
-				JSONArray members = new JSONArray();
 				
+				JSONArray members = new JSONArray();
+				ArrayList<User> userlist = p.getUserlist();
+				for (User user : userlist) {
+					JSONObject u = new JSONObject();
+					u.put("userid", user.getUserId());
+					u.put("lastName", user.getLastName());
+					u.put("firstName", user.getFirstName());
+					u.put("sex", user.getSex());
+					members.put(u);
+				}
 				r.put("members", members);
+				
 				arr.put(r);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
