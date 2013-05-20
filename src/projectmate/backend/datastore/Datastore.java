@@ -445,7 +445,7 @@ public class Datastore {
 		Key key = KeyFactory.createKey("pair", "default");
 		
 		Filter userFilter = new FilterPredicate("userid", FilterOperator.EQUAL, userId);
-		Query query = new Query("pair", key).setFilter(userFilter).addSort("visittime", Query.SortDirection.DESCENDING);;
+		Query query = new Query("pair", key).setFilter(userFilter).addSort("visittime", Query.SortDirection.DESCENDING);
 		List<Entity> pairs = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(4));
 		ArrayList<Long> result = new ArrayList<Long> ();
 		for(Entity pair : pairs){
