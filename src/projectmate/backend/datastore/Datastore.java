@@ -174,7 +174,7 @@ public class Datastore {
 			user = (String) user;
 			userpair.setProperty("userid", user);
 			userpair.setProperty("taskid", tid);
-
+			userpair.setProperty("deadline", deadline);
 			datastore.put(userpair);
 		}
 
@@ -201,7 +201,7 @@ public class Datastore {
 	private ArrayList<String> findAllTaskPairs(String userId) {
 		Key keyforPair = KeyFactory.createKey("taskpair", "default");
 		Filter userFilter = new FilterPredicate("userid", FilterOperator.EQUAL, userId);
-		Query query = new Query("taskpair", keyforPair).setFilter(userFilter);
+		Query query = new Query("taskpair", keyforPair).setFilter(userFilter).addSort("deadline", Query.SortDirection.DESCENDING);
 		List<Entity> pairs = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
 		ArrayList<String> result = new ArrayList<String> ();
 		for (Entity pair : pairs) {
@@ -219,6 +219,8 @@ public class Datastore {
 			Filter taskFilter = new FilterPredicate("tid", FilterOperator.EQUAL, tid);
 			Query query = new Query("task", keyforTask).setFilter(taskFilter);
 			List<Entity> list = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
+			if(list == null)
+				continue;
 			Entity tmp = (Entity) list.get(0);
 			Task task = new Task();
 			task.setTaskId((String) tmp.getProperty("tid"));
@@ -253,6 +255,8 @@ public class Datastore {
 		Query query = new Query("pair", key).setFilter(userFilter);
 		List<Entity> pairs = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
 		ArrayList<Long> result = new ArrayList<Long> ();
+		if(pairs == null)
+			return result;
 		for(Entity pair : pairs){
 			Long tmp = (Long) pair.getProperty("pid");
 			result.add(tmp);
@@ -266,7 +270,7 @@ public class Datastore {
 		ArrayList<Project> projects = new ArrayList<Project> ();
 		for(Long pid : pids){
 			Filter projFilter = new FilterPredicate("pid", FilterOperator.EQUAL, Long.valueOf(pid));
-			Query query = new Query("proj", key);
+			Query query = new Query("proj", key).setFilter(projFilter);
 			List<Entity> list = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(100));
 			Entity tmp = (Entity) list.get(0);
 			Project tmpproj = new Project();
@@ -454,5 +458,4 @@ public class Datastore {
 		}
 		return result;
 	}
-
 }
