@@ -405,7 +405,7 @@ public class Datastore {
 		Filter taskFilter = new FilterPredicate("userid", FilterOperator.EQUAL, userId);
 		Filter favFilter = new FilterPredicate("fav", FilterOperator.EQUAL, 1);
 		CompositeFilter comFilter = CompositeFilterOperator.and(taskFilter, favFilter);
-		Query query = new Query("task", keyforPair).setFilter(taskFilter);
+		Query query = new Query("task", keyforPair).setFilter(comFilter);
 		List<Entity> list =  datastore.prepare(query).asList(FetchOptions.Builder.withLimit(1000));
 		ArrayList<Project> result = new ArrayList<Project> ();
 		if(list == null)
@@ -436,6 +436,23 @@ public class Datastore {
 	//get 4 most recent projects for a user
 	public ArrayList<Project> getRecentProjects(String userId) {
 
+		ArrayList<Long> ids = getRecentProjectIds(userId);
+		return getProjects(ids);
+	}
+	
+	//get 4 most recent project id for a user
+	private ArrayList<Long> getRecentProjectIds(String userId) {
+		Key key = KeyFactory.createKey("pair", "default");
+		
+		Filter userFilter = new FilterPredicate("userid", FilterOperator.EQUAL, userId);
+		Query query = new Query("pair", key).setFilter(userFilter).addSort("visittime", Query.SortDirection.DESCENDING);;
+		List<Entity> pairs = datastore.prepare(query).asList(FetchOptions.Builder.withLimit(4));
+		ArrayList<Long> result = new ArrayList<Long> ();
+		for(Entity pair : pairs){
+			Long tmp = (Long) pair.getProperty("pid");
+			result.add(tmp);
+		}
+		return result;
 	}
 
 }
